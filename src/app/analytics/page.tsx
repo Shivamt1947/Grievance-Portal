@@ -39,8 +39,11 @@ export default function AnalyticsPage() {
   if (!user || user.role !== 'Admin') return null
   if (isLoading) return <div className="text-slate-400">Loading comprehensive analytics...</div>
 
+  // Protect array reducer crash
+  const validComplaints = Array.isArray(complaints) ? complaints : []
+
   // Status Data
-  const statusCounts = complaints?.reduce((acc: any, curr: any) => {
+  const statusCounts = validComplaints.reduce((acc: any, curr: any) => {
     acc[curr.status] = (acc[curr.status] || 0) + 1
     return acc
   }, {}) || {}
@@ -52,7 +55,7 @@ export default function AnalyticsPage() {
   }))
 
   // Category Data
-  const categoryCounts = complaints?.reduce((acc: any, curr: any) => {
+  const categoryCounts = validComplaints.reduce((acc: any, curr: any) => {
     acc[curr.category] = (acc[curr.category] || 0) + 1
     return acc
   }, {}) || {}

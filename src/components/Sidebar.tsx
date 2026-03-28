@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
@@ -13,7 +13,13 @@ export function Sidebar() {
   const pathname = usePathname()
   const { user, logout } = useAuthStore()
 
-  if (!user) return null
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted || !user) return null
 
   const getLinks = () => {
     switch (user.role) {

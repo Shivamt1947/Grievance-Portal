@@ -29,6 +29,17 @@ export function TeacherDashboard() {
 
   if (isLoading) return <div className="text-slate-400">Loading assigned complaints...</div>
 
+  if (!isLoading && complaints && !Array.isArray(complaints)) {
+    return (
+      <div className="p-6 bg-red-950/30 border border-red-500/20 rounded-xl">
+        <h3 className="text-red-400 font-semibold mb-2">Database Connection Error</h3>
+        <p className="text-slate-300 text-sm">Failed to connect to the database. The Vercel Serverless environment requires a cloud database instead of local SQLite for full functionality.</p>
+      </div>
+    )
+  }
+
+  const validComplaints = Array.isArray(complaints) ? complaints : []
+
   return (
     <div className="space-y-6">
       <Card className="bg-gradient-to-br from-slate-800 to-slate-950 border border-t-white/10 border-l-white/10 border-b-black/80 border-r-black/80 shadow-[8px_8px_16px_#000000,-4px_-4px_12px_rgba(255,255,255,0.03)] rounded-2xl">
@@ -37,10 +48,10 @@ export function TeacherDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {complaints?.length === 0 && (
+            {validComplaints.length === 0 && (
               <p className="text-slate-400 text-sm text-center py-8">No complaints assigned.</p>
             )}
-            {complaints?.map((complaint: any) => (
+            {validComplaints.map((complaint: any) => (
               <div key={complaint.id} className="p-4 rounded-xl border border-b-white/5 border-r-white/5 border-t-black/80 border-l-black/80 bg-slate-900/80 shadow-[inset_4px_4px_8px_rgba(0,0,0,0.6),inset_-4px_-4px_8px_rgba(255,255,255,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 transition-transform hover:scale-[1.01] duration-300">
                 <div>
                   <div className="flex items-center gap-3 mb-1">

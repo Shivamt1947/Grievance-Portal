@@ -44,12 +44,23 @@ export function StudentDashboard() {
 
   if (isLoading) return <div className="text-slate-400">Loading complaints...</div>
 
-  const total = complaints?.length || 0
-  const pending = complaints?.filter((c: any) => c.status === 'Submitted' || c.status === 'In Progress' || c.status === 'Under Review' || c.status === 'Action Taken').length || 0
-  const escalated = complaints?.filter((c: any) => c.status === 'Escalated').length || 0
-  const resolved = complaints?.filter((c: any) => c.status === 'Resolved' || c.status === 'Closed').length || 0
+  if (!isLoading && complaints && !Array.isArray(complaints)) {
+    return (
+      <div className="p-6 bg-red-950/30 border border-red-500/20 rounded-xl">
+        <h3 className="text-red-400 font-semibold mb-2">Database Connection Error</h3>
+        <p className="text-slate-300 text-sm">Failed to connect to the database. The Vercel Serverless environment requires a cloud database instead of local SQLite for full functionality.</p>
+      </div>
+    )
+  }
 
-  const filteredComplaints = complaints?.filter((c: any) => {
+  const validComplaints = Array.isArray(complaints) ? complaints : []
+
+  const total = validComplaints.length || 0
+  const pending = validComplaints.filter((c: any) => c.status === 'Submitted' || c.status === 'In Progress' || c.status === 'Under Review' || c.status === 'Action Taken').length || 0
+  const escalated = validComplaints.filter((c: any) => c.status === 'Escalated').length || 0
+  const resolved = validComplaints.filter((c: any) => c.status === 'Resolved' || c.status === 'Closed').length || 0
+
+  const filteredComplaints = validComplaints.filter((c: any) => {
     if (filter === 'Pending') return c.status === 'Submitted' || c.status === 'In Progress' || c.status === 'Under Review' || c.status === 'Action Taken'
     if (filter === 'Escalated') return c.status === 'Escalated'
     if (filter === 'Resolved') return c.status === 'Resolved' || c.status === 'Closed'

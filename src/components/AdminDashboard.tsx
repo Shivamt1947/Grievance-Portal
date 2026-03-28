@@ -55,8 +55,19 @@ export function AdminDashboard() {
 
   if (isLoading) return <div className="text-slate-400">Loading all complaints...</div>
 
+  // Handle fetch error from API
+  if (!isLoading && complaints && !Array.isArray(complaints)) {
+    return (
+      <div className="p-6 bg-red-950/30 border border-red-500/20 rounded-xl">
+        <h3 className="text-red-400 font-semibold mb-2">Database Connection Error</h3>
+        <p className="text-slate-300 text-sm">Failed to connect to the database. The Vercel Serverless environment requires a cloud database instead of local SQLite for full functionality.</p>
+      </div>
+    )
+  }
+
   // Analytics preparation
-  const statusCounts = complaints?.reduce((acc: any, curr: any) => {
+  const validComplaints = Array.isArray(complaints) ? complaints : []
+  const statusCounts = validComplaints.reduce((acc: any, curr: any) => {
     acc[curr.status] = (acc[curr.status] || 0) + 1
     return acc
   }, {}) || {}
